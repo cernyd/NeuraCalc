@@ -8,13 +8,15 @@ math problems are chosen randomly - answering might seem harder at first
 but this approach (called *mixed practice*) improves recognition of different
 problem types in the long term.
 
-## Supported problem types
+## Supported exercise types
 1) Two digit multiplication by 11
 2) Two digit square of numbers ending with 5 (or multiplication numbers with first digits adding up to 10)
 3) Finding number complements (distance of number from nearest "simple number", for example distance of 87 from 100 is 13)
+4) Addition and subtraction (up to 3 digits by default)
 
 ## Planned features
 1) More problem types
 2) Progress evaluation and histograms
 3) Feedback and explanations of problem solutions
 4) Worksheet generation
+5) Difficulty scaling (determined by current skill level)

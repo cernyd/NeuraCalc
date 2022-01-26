@@ -125,7 +125,55 @@ class NumComplement(NumericExercise):
         return f"Complement of {self._x} = {self.answer}"
 
 
-EXERCISES = (MulBy11, TwoDigitSquare, ComplementMul, NumComplement)
+class AdditionExercise(NumericExercise):
+    def __init__(self, max_digits=3):
+        a_digits = randint(2, max_digits)
+        b_digits = randint(2, a_digits)
+        self._a = randint(10**a_digits, 9*10**a_digits)
+        self._b = randint(10**b_digits, 9*10**b_digits)
+
+    @property
+    def answer(self):
+        return self._a + self._b
+
+    @property
+    def _prompt(self):
+        if random() < 0.5:
+            return f"{self._a} + {self._b} = ?"
+        else:
+            return f"{self._b} + {self._a} = ?"
+
+    @property
+    def solution(self):
+        return f"{self._a} + {self._b} = {self.answer}"
+
+
+class SubtractionExercise(NumericExercise):
+    def __init__(self, max_digits=3):
+        a_digits = randint(2, max_digits)
+        b_digits = randint(2, a_digits)
+        self._a = randint(10**a_digits, 9*10**a_digits)
+
+        b_max = 90**b_digits
+        if a_digits == b_digits:
+            b_max = self._a
+
+        self._b = randint(10**b_digits, b_max)
+
+    @property
+    def answer(self):
+        return self._a - self._b
+
+    @property
+    def _prompt(self):
+        return f"{self._a} - {self._b} = ?"
+
+    @property
+    def solution(self):
+        return f"{self._a} - {self._b} = {self.answer}"
+
+
+EXERCISES = (MulBy11, TwoDigitSquare, ComplementMul, NumComplement, AdditionExercise, SubtractionExercise)
 
 
 class ExerciseGenerator:
