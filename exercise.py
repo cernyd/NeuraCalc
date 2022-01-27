@@ -49,27 +49,32 @@ class NumericExercise(Exercise):
         except ValueError:
             raise ValueError("Please enter a number!")
 
+# MULTIPLICATION
 
-class MulBy11(NumericExercise):
-    def __init__(self, start=10, end=99):
-        super().__init__()
 
-        self._x = randint(start, end)
-
+class MulExercise(NumericExercise):
     @property
     def correct_answer(self):
-        return self._x * 11
+        return self._x * self._y
 
     @property
     def _prompt(self):
         if random() < 0.5:
-            return f"{self._x} x 11 = ?"
+            return f"{self._x} x {self._y} = ?"
         else:
-            return f"11 x {self._x} = ?"
+            return f"{self._y} x {self._x} = ?"
 
     @property
     def solution(self):
-        return f"{self._x} x 11 = {self.correct_answer}"
+        return f"{self._x} x {self._y} = {self.correct_answer}"
+
+
+class MulBy11(MulExercise):
+    def __init__(self, start=10, end=99):
+        super().__init__()
+
+        self._x = randint(start, end)
+        self._y = 11
 
     @property
     def hint(self):
@@ -93,11 +98,35 @@ class MulBy11(NumericExercise):
         return hint
 
 
-class TwoDigitSquare(NumericExercise):
+class ComplementMul(MulExercise):
     def __init__(self):
         super().__init__()
 
-        self._x = randint(1, 9) * 10 + 5
+        digit = randint(1, 9) * 10
+        digit2 = randint(1, 9)
+
+        self._x = digit + digit2
+        self._y = digit + (10 - digit2)
+
+
+class MulByDigit(MulExercise):
+    def __init__(self, max_digits=3):
+        super().__init__()
+
+        self._x = randint(10, 10**max_digits-1)
+        self._y = randint(1, 9)
+
+
+# SQUARE
+
+class SquareExercise(NumericExercise):
+    def __init__(self):
+        super().__init__()
+
+        if random() < 0.5:
+            self._x = randint(10, 99)
+        else:
+            self._x = randint(1, 2) * 100 + randint(0, 10)
 
     @property
     def correct_answer(self):
@@ -111,28 +140,7 @@ class TwoDigitSquare(NumericExercise):
     def solution(self):
         return f"{self._x}^2 = {self.correct_answer}"
 
-
-class ComplementMul(NumericExercise):
-    def __init__(self):
-        super().__init__()
-
-        digit = randint(1, 9) * 10
-        digit2 = randint(1, 9)
-
-        self._x = digit + digit2
-        self._y = digit + (10 - digit2)
-
-    @property
-    def correct_answer(self):
-        return self._x * self._y
-
-    @property
-    def _prompt(self):
-        return f"{self._x} x {self._y} = ?"
-
-    @property
-    def solution(self):
-        return f"{self._x} x {self._y} = {self._x * self._y}"
+# OTHER
 
 
 class NumComplement(NumericExercise):
@@ -209,8 +217,8 @@ class SubtractionExercise(NumericExercise):
 
 
 NUMERIC_EXERCISES = (
-    MulBy11, TwoDigitSquare, ComplementMul, NumComplement,
-    AdditionExercise, SubtractionExercise
+    MulBy11, ComplementMul, MulByDigit, NumComplement,
+    AdditionExercise, SubtractionExercise, SquareExercise
 )
 
 ALL_EXERCISES = tuple(NUMERIC_EXERCISES)

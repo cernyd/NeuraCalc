@@ -1,7 +1,7 @@
 import curses
 import os
 
-from exercise import ALL_EXERCISES, RandomExercises
+from exercise import RandomExercises
 
 
 class NeuraCalcTUI:
