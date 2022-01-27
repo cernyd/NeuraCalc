@@ -10,11 +10,12 @@ def nearest_upper(num):
 
 class Exercise(abc.ABC):
     def __init__(self):
-        self.duration = -1
+        self.duration = 0
         self.answer_correct = False
+        self.user_answer = None
 
     @abc.abstractproperty
-    def answer(self):
+    def correct_answer(self):
         return None
 
     @abc.abstractmethod
@@ -41,7 +42,8 @@ class Exercise(abc.ABC):
 class NumericExercise(Exercise):
     def check_answer(self, answer):
         try:
-            self.answer_correct = int(answer) == self.answer
+            self.user_answer = int(answer)
+            self.answer_correct = self.user_answer == self.correct_answer
             self.duration = time() - self.duration
             return self.answer_correct
         except ValueError:
@@ -50,10 +52,12 @@ class NumericExercise(Exercise):
 
 class MulBy11(NumericExercise):
     def __init__(self, start=10, end=99):
+        super().__init__()
+
         self._x = randint(start, end)
 
     @property
-    def answer(self):
+    def correct_answer(self):
         return self._x * 11
 
     @property
@@ -65,15 +69,17 @@ class MulBy11(NumericExercise):
 
     @property
     def solution(self):
-        return f"{self._x} x 11 = {self.answer}"
+        return f"{self._x} x 11 = {self.correct_answer}"
 
 
 class TwoDigitSquare(NumericExercise):
     def __init__(self):
+        super().__init__()
+
         self._x = randint(1, 9) * 10 + 5
 
     @property
-    def answer(self):
+    def correct_answer(self):
         return self._x**2
 
     @property
@@ -82,11 +88,13 @@ class TwoDigitSquare(NumericExercise):
 
     @property
     def solution(self):
-        return f"{self._x}^2 = {self.answer}"
+        return f"{self._x}^2 = {self.correct_answer}"
 
 
 class ComplementMul(NumericExercise):
     def __init__(self):
+        super().__init__()
+
         digit = randint(1, 9) * 10
         digit2 = randint(1, 9)
 
@@ -94,7 +102,7 @@ class ComplementMul(NumericExercise):
         self._y = digit + (10 - digit2)
 
     @property
-    def answer(self):
+    def correct_answer(self):
         return self._x * self._y
 
     @property
@@ -108,12 +116,14 @@ class ComplementMul(NumericExercise):
 
 class NumComplement(NumericExercise):
     def __init__(self):
+        super().__init__()
+
         self._exp = randint(1, 3)
         self._x = randint(1*10**self._exp, 9*10**self._exp)
         self._nearest = nearest_upper(self._x)
 
     @property
-    def answer(self):
+    def correct_answer(self):
         return self._nearest - self._x
 
     @property
@@ -122,18 +132,20 @@ class NumComplement(NumericExercise):
 
     @property
     def solution(self):
-        return f"Complement of {self._x} = {self.answer}"
+        return f"Complement of {self._x} = {self.correct_answer}"
 
 
 class AdditionExercise(NumericExercise):
     def __init__(self, max_digits=3):
+        super().__init__()
+
         a_digits = randint(2, max_digits)
         b_digits = randint(2, a_digits)
         self._a = randint(10**a_digits, 9*10**a_digits)
         self._b = randint(10**b_digits, 9*10**b_digits)
 
     @property
-    def answer(self):
+    def correct_answer(self):
         return self._a + self._b
 
     @property
@@ -145,11 +157,13 @@ class AdditionExercise(NumericExercise):
 
     @property
     def solution(self):
-        return f"{self._a} + {self._b} = {self.answer}"
+        return f"{self._a} + {self._b} = {self.correct_answer}"
 
 
 class SubtractionExercise(NumericExercise):
     def __init__(self, max_digits=3):
+        super().__init__()
+
         a_digits = randint(2, max_digits)
         b_digits = randint(2, a_digits)
         self._a = randint(10**a_digits, 9*10**a_digits)
@@ -161,7 +175,7 @@ class SubtractionExercise(NumericExercise):
         self._b = randint(10**b_digits, b_max)
 
     @property
-    def answer(self):
+    def correct_answer(self):
         return self._a - self._b
 
     @property
@@ -170,43 +184,36 @@ class SubtractionExercise(NumericExercise):
 
     @property
     def solution(self):
-        return f"{self._a} - {self._b} = {self.answer}"
+        return f"{self._a} - {self._b} = {self.correct_answer}"
 
 
-EXERCISES = (MulBy11, TwoDigitSquare, ComplementMul, NumComplement, AdditionExercise, SubtractionExercise)
+EXERCISES = (
+    MulBy11, TwoDigitSquare, ComplementMul, NumComplement,
+    AdditionExercise, SubtractionExercise
+)
 
 
 class ExerciseGenerator:
-    def __init__(self, reps=5, sets=5):
+    def __init__(self, count=25):
         self.answers = {}
-        self.reps = reps
-        self.sets = sets
-
-        self.curr_set = 0
-        self.curr_rep = 0
+        self.count = count
+        self.i = 0
 
         for e in EXERCISES:
             self.answers[e.__name__] = []
 
-        print(self.answers)
-
+    @property
     def results(self):
-        print("=== RESULTS ===")
-        # print(self.answers)
+        return self.answers
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        if self.curr_rep >= self.reps:
-            self.curr_set += 1
-            self.curr_rep = 0
-
-        if self.curr_set >= self.sets:
-            self.results()
+        if self.i >= self.count:
             raise StopIteration()
 
-        self.curr_rep += 1
+        self.i += 1
 
         e = choice(EXERCISES)()
         self.answers[e.__class__.__name__].append(e)
