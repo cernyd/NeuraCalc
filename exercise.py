@@ -36,7 +36,7 @@ class Exercise(abc.ABC):
         return "SOLUTION"
 
     def hint(self):
-        return None
+        return ""
 
 
 class NumericExercise(Exercise):
@@ -70,6 +70,27 @@ class MulBy11(NumericExercise):
     @property
     def solution(self):
         return f"{self._x} x 11 = {self.correct_answer}"
+
+    @property
+    def hint(self):
+        hint = "Multiplication by 11\n"
+        hint += f"{self.solution}\n"
+        a, b = list(str(self._x))
+        added_digits = int(a) + int(b)
+        i = 1
+        hint += f"{i}) Add both digits: {a} + {b} = {added_digits}\n"
+
+        i += 1
+        line2 = f"{i}) Place added digits between original digits: {a}0{b}\n"
+        hint += line2
+        padding = len(line2) - 3
+        if added_digits >= 10:
+            padding -= 1
+        hint += padding * " " + str(added_digits) + "\n"
+        hint += (len(line2)-4) * " " + "---\n"
+        hint += (len(line2)-4) * " " + str(self.correct_answer) + "\n"
+
+        return hint
 
 
 class TwoDigitSquare(NumericExercise):

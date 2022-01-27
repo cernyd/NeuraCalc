@@ -1,7 +1,7 @@
 import curses
 import os
 
-from exercise import RandomExercises
+from exercise import ALL_EXERCISES, RandomExercises
 
 
 class NeuraCalcTUI:
@@ -87,7 +87,8 @@ class NeuraCalcTUI:
                         color
                     )
 
-        self._stdscr.getch()
+        while self._stdscr.getkey() != curses.KEY_ENTER:
+            pass
 
     def __del__(self):
         curses.endwin()
