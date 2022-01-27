@@ -1,14 +1,14 @@
 import curses
 import os
 
-from exercise import ExerciseGenerator
+from exercise import RandomExercises
 
 
 class NeuraCalcTUI:
     def __init__(self):
         self._width = 80
         self._stdscr = curses.initscr()
-        self._stdscr = curses.newwin(0, self._width)
+        self._stdscr = curses.newwin(1000, self._width)
         curses.start_color()
         curses.use_default_colors()
         curses.cbreak()
@@ -16,7 +16,7 @@ class NeuraCalcTUI:
         curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLACK)
         curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
 
-        self._gen = ExerciseGenerator()
+        self._gen = RandomExercises()
         self._e = None
         self._errmsg = ""
 
@@ -38,7 +38,6 @@ class NeuraCalcTUI:
         while True:
             self.refresh_width()
             self._stdscr.clear()
-            self._stdscr.border()
 
             prompt = self._e.prompt
 
@@ -67,7 +66,6 @@ class NeuraCalcTUI:
     def draw_results(self):
         self.refresh_width()
         self._stdscr.clear()
-        self._stdscr.border()
 
         results = self._gen.results
         for category, exercises in results.items():
@@ -89,7 +87,7 @@ class NeuraCalcTUI:
                         color
                     )
 
-        self._stdscr.getstr()
+        self._stdscr.getch()
 
     def __del__(self):
         curses.endwin()
@@ -98,13 +96,3 @@ class NeuraCalcTUI:
 if __name__ == "__main__":
     tui = NeuraCalcTUI()
     tui.run()
-
-    # for e in gen:
-    #     # print(f"Took {round(e.duration, 2)} seconds.")
-    #     # if correct:
-    #     #     print("Answer correct!")
-    #     # else:
-    #     #     print("Answer incorrect!")
-    #     #     print(f"Correct solution: {e.solution}")
-
-    #     # print()

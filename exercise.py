@@ -1,6 +1,6 @@
 import abc
 from math import floor, log10
-from random import choice, randint, random
+from random import choice, randint, random, shuffle
 from time import time
 
 
@@ -187,19 +187,26 @@ class SubtractionExercise(NumericExercise):
         return f"{self._a} - {self._b} = {self.correct_answer}"
 
 
-EXERCISES = (
+NUMERIC_EXERCISES = (
     MulBy11, TwoDigitSquare, ComplementMul, NumComplement,
     AdditionExercise, SubtractionExercise
 )
 
+ALL_EXERCISES = tuple(NUMERIC_EXERCISES)
+
 
 class ExerciseGenerator:
-    def __init__(self, count=25):
+    def __init__(self, count=25, exercises=None):
+        self._exercises = exercises
+
+        if not exercises:
+            self._exercises = ALL_EXERCISES
+
         self.answers = {}
         self.count = count
         self.i = 0
 
-        for e in EXERCISES:
+        for e in self._exercises:
             self.answers[e.__name__] = []
 
     @property
@@ -215,6 +222,40 @@ class ExerciseGenerator:
 
         self.i += 1
 
-        e = choice(EXERCISES)()
+        e = self._next_exercise()()
         self.answers[e.__class__.__name__].append(e)
         return e
+
+    @abc.abstractmethod
+    def _next_exercise(self):
+        raise NotImplementedError()
+
+
+class RandomExercises(ExerciseGenerator):
+    def _next_exercise(self):
+        return choice(self._exercises)
+
+
+class MassedExercises(ExerciseGenerator):
+    def __init__(self, count=25, exercises=None):
+        super().__init__(count, exercises)
+
+        exercises = list(self._exercises)
+        shuffle(exercises)
+        self._exercises = tuple(exercises)
+
+        per_block = self.count // len(self._exercises)
+        self._per_block = [per_block] * len(self._exercises)
+
+        # Randomly distribute leftover exercises
+        random_index = randint(0, len(self._per_block)-1)
+        self._per_block[random_index] += self.count % per_block
+
+    def _next_exercise(self):
+        if self._per_block[0] == 0:
+            self._per_block.pop(0)
+
+        i = len(self._exercises) - len(self._per_block)
+        self._per_block[0] -= 1
+
+        return self._exercises[i]
