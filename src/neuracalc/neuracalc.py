@@ -1,7 +1,7 @@
 import curses
 import os
 
-from exercise import RandomExercises
+from neuracalc.exercise import RandomExercises
 
 
 class NeuraCalcTUI:
@@ -94,6 +94,10 @@ class NeuraCalcTUI:
         curses.endwin()
 
 
-if __name__ == "__main__":
+def main():
     tui = NeuraCalcTUI()
     tui.run()
+
+
+if __name__ == "__main__":
+    main()
